@@ -1,0 +1,137 @@
+## ----include = FALSE----------------------------------------------------------
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## ----setup--------------------------------------------------------------------
+library(WhiteLabRt)
+
+## -----------------------------------------------------------------------------
+data("sample_multi_site")
+data("transfer_matrix")
+
+## -----------------------------------------------------------------------------
+site_names <- colnames(sample_multi_site)[c(2, 3)]
+Y <- matrix(integer(1), nrow = nrow(sample_multi_site), ncol = 2)
+for(i in 1:nrow(Y)) {
+  for(j in c(2, 3)) {
+    Y[i,j-1] <- as.integer(sample_multi_site[i,j])
+  }
+}
+all(is.integer(Y))
+
+## -----------------------------------------------------------------------------
+sip <- si(14, 4.29, 1.18, leading0 = FALSE)
+
+## ----runspatialrt,eval=F------------------------------------------------------
+#  sample_m_hier <- spatialRt(report_dates = sample_multi_site$date,
+#                   case_matrix = Y,
+#                   transfer_matrix = transfer_matrix,
+#                   v2 = FALSE,
+#                   sip = sip, chains = 1)
+
+## -----------------------------------------------------------------------------
+data("sample_m_hier")
+rstan::check_divergences(sample_m_hier)
+rstan::check_hmc_diagnostics(sample_m_hier)
+
+out <- rstan::extract(sample_m_hier)
+# QC
+# launch_shinystan(m_hier)
+
+## -----------------------------------------------------------------------------
+dim(out$M)
+dim(out$xsigma)
+
+data_l <- lapply(1:dim(out$M)[3], function(i) {
+  data.frame(
+    x      = 1:dim(out$M)[2],
+    y_real = Y[, i],
+    y      = apply(out$M[, , i], 2, mean),
+    yl     = apply(out$M[, , i], 2, quantile, probs = 0.025),
+    yh     = apply(out$M[, , i], 2, quantile, probs = 0.975),
+    Rt     = apply(out$R[, , i], 2, mean),
+    Rtl    = apply(out$R[, , i], 2, quantile, probs = 0.025),
+    Rth    = apply(out$R[, , i], 2, quantile, probs = 0.975),
+    region = site_names[i] # must be a string
+  )
+})
+
+data_all <- do.call(rbind, data_l)
+head(data_all)
+
+# Summarise data
+data_all_summarise <- aggregate(
+  cbind(y, y_real, yl, yh, Rt, Rtl, Rth) ~ x + region,
+  data = data_all,
+  FUN = mean
+)
+
+head(data_all_summarise)
+
+## -----------------------------------------------------------------------------
+# Generate a color palette
+regions <- unique(data_all_summarise$region)
+# Define a set of distinct colors
+colors <- c("red", "blue", "green", "purple", "orange", "brown",
+            "pink", "yellow", "cyan", "magenta")
+colors <- colors[1:length(regions)]
+names(colors) <- regions
+
+## ----fig.width=6.75,dev='png'-------------------------------------------------
+# Plot expected cases
+plot(
+  x = as.integer(data_all_summarise$x), 
+  y = as.numeric(data_all_summarise$y), 
+  type = "n",
+  xlab = "Days", 
+  ylab = "Cases",
+  main = "Expected Cases"
+)
+
+for (region_i in regions) {
+  region_data <- subset(data_all_summarise, region == region_i)
+  points(x = region_data$x, region_data$y_real, col = colors[region_i])
+  polygon(
+    c(region_data$x, rev(region_data$x)), 
+    c(region_data$yl, rev(region_data$yh)), 
+    col = adjustcolor(colors[region_i], alpha.f = 0.3), border = NA
+  )
+  lines(region_data$x, region_data$y, col = colors[region_i], lwd = 0.5)
+}
+
+legend("topright",
+       legend = regions,
+       col = colors,
+       lty = rep(1, length(regions)), 
+       cex = 0.8,
+       pt.cex = 1.5 ) # Text size
+
+## ----fig.width=6.75, dev='png'------------------------------------------------
+# Plot R(t)
+plot(
+  data_all_summarise$x, data_all_summarise$Rt, 
+  xlab = "Days", ylab = "Reproduction Number",
+  type = "n",
+  main = "R(t)",
+  ylim = c(0, 5)
+)
+for (region_i in regions) {
+  region_data <- subset(data_all_summarise, region == region_i)
+  polygon(
+    c(region_data$x, rev(region_data$x)), 
+    c(region_data$Rtl, rev(region_data$Rth)), 
+    col = adjustcolor(colors[region_i], alpha.f = 0.3), border = NA
+  )
+  lines(region_data$x, region_data$Rt, col = colors[region_i], lwd = 0.5)
+}
+abline(h = 1, col = "black", lwd = 1, lty = 1)
+legend("topright",
+       legend = regions,
+       col = colors,
+       lty = c(1, 1), 
+       cex = 0.8,
+       pt.cex = 1.5 ) # Text size
+
+
