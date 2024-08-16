@@ -1,4 +1,4 @@
-d2a29bff1bb0a638890b571e11ac6382 *DESCRIPTION
+7b31ea2baa757e3e0a4a674e62920c72 *DESCRIPTION
 9ae7b03d485a65804528cfef22d15c66 *LICENSE
 0209dd5ee1c43364b21720a41c577163 *NAMESPACE
 bc0e1e1d6cc2e8eee18741fbd430725e *R/WhiteLabRt-package.R
@@ -10,7 +10,7 @@ e75c00d80123681effd559e5cc06a53f *R/data.R
 2f9826d0aea5d9a4cdaae0f31db7b292 *R/plot.caseCounts.R
 b9e4c91374c039762851907618b9b0cf *R/run_backnow.R
 15386af86d7dd403af8dbe8dc719bc27 *R/si.R
-d96b947ea5a30d4c01e569896709867e *R/spatialRt.R
+22bf8b3641e52f4a316b851ab02cbcf5 *R/spatialRt.R
 f3916915a174c509aff226ad56cb012d *R/stanmodels.R
 c45bf0a0673aa33b5781b4446ad4745d *README.md
 5eabade751804384bf0200656898e1ef *build/vignette.rds
@@ -27,7 +27,7 @@ da90810731f9f1e17f836dfcd1532e62 *data/sample_onset_dates.rda
 2dccec2ee717b491bc38e34261df64d3 *data/transfer_matrix.rda
 138ace380a32809226fc4f6f82a36bb0 *inst/doc/backcalc.R
 6f4f7895e848e46e598490fbb8b0fe0f *inst/doc/backcalc.Rmd
-7a6f6a7f96e20567bc81c9843825adec *inst/doc/backcalc.html
+afbdb2c10a0e8aca714d3e87b3299a2e *inst/doc/backcalc.html
 e063b9f72b51c4c9c95136b9380daeac *inst/doc/spatialRt.R
 3e84599d0cda05259eac55da30aea961 *inst/doc/spatialRt.Rmd
 5ef2e44087bb876d235e5f02482b26ae *inst/doc/spatialRt.html

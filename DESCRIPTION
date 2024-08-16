@@ -2,7 +2,7 @@ Package: WhiteLabRt
 Type: Package
 Title: Novel Methods for Reproduction Number Estimation,
         Back-Calculation, and Forecasting
-Version: 1.0
+Version: 1.0.1
 Date: 2024-07-23
 Authors@R: 
     c(person("Chad", "Milando", , "cmilando@bu.edu", role = c("aut", "cre")),
@@ -32,10 +32,10 @@ Language: en-US
 LazyData: true
 VignetteBuilder: knitr
 NeedsCompilation: yes
-Packaged: 2024-07-29 14:39:57 UTC; cwm
+Packaged: 2024-08-16 22:24:10 UTC; cwm
 Author: Chad Milando [aut, cre],
   Tenglong Li [ctb],
   Zhenwei Zhou [ctb],
   Laura White [ctb]
 Repository: CRAN
-Date/Publication: 2024-07-31 10:10:28 UTC
+Date/Publication: 2024-08-16 23:00:03 UTC
